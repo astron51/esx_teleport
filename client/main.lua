@@ -51,16 +51,9 @@ AddEventHandler('esx_teleport:hasEnteredExitMarker', function(zone)
 	CurrentActionData = {zone = zone}
 end)
 
-AddEventHandler('esx_teleport:hasEnteredWashArea', function(zone)
-	CurrentAction     = 'wash_menu'
-	CurrentActionMsg  = _U('press_menu')
-	CurrentActionData = {zone = zone}
-end)
-
 AddEventHandler('esx_teleport:masterExitMarker', function(zone)
 	CurrentAction = nil
-	CurrentActionData = nil
-	ESX.UI.Menu.CloseAll()		
+	CurrentActionData = nil	
 end)
 
 Citizen.CreateThread(function()
@@ -96,7 +89,7 @@ Citizen.CreateThread(function()
 			TriggerEvent('esx_teleport:hasEnteredExitMarker', currentZone)
 		end
 		
-		if not isInEntryMarker and not isInExitMarker and not isInWashMarker and hasAlreadyEnteredMarker then
+		if not isInEntryMarker and not isInExitMarker and hasAlreadyEnteredMarker then
 			hasAlreadyEnteredMarker = false
 			TriggerEvent('esx_teleport:masterExitMarker', LastZone)
 		end
