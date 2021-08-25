@@ -1,8 +1,8 @@
-ESX								= nil
+ESX				= nil
 local hasAlreadyEnteredMarker	= nil
-local CurrentAction				= nil
-local CurrentActionMsg			= ''
-local CurrentActionData			= {}
+local CurrentAction		= nil
+local CurrentActionMsg		= ''
+local CurrentActionData		= {}
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
--- Enter / Exit Marker Events
+-- Enter / Exit Marker Events and money laundry event ( Promp Press E )
 AddEventHandler('esx_teleport:hasEnteredEntryMarker', function(zone)
 	CurrentAction     = 'waiting_entry'
 	CurrentActionMsg  = _U('prompt_Enter')
@@ -51,9 +51,16 @@ AddEventHandler('esx_teleport:hasEnteredExitMarker', function(zone)
 	CurrentActionData = {zone = zone}
 end)
 
+AddEventHandler('esx_teleport:hasEnteredWashArea', function(zone)
+	CurrentAction     = 'wash_menu'
+	CurrentActionMsg  = _U('press_menu')
+	CurrentActionData = {zone = zone}
+end)
+
 AddEventHandler('esx_teleport:masterExitMarker', function(zone)
 	CurrentAction = nil
 	CurrentActionData = nil
+	ESX.UI.Menu.CloseAll()		
 end)
 
 Citizen.CreateThread(function()
@@ -81,6 +88,7 @@ Citizen.CreateThread(function()
 		if isInEntryMarker and not hasAlreadyEnteredMarker and not inCar then
 			hasAlreadyEnteredMarker = true
 			TriggerEvent('esx_teleport:hasEnteredEntryMarker', currentZone)
+			LastEntryZone = currentZone
 		end
 		
 		if isInExitMarker and not hasAlreadyEnteredMarker and not inCar then
@@ -88,7 +96,7 @@ Citizen.CreateThread(function()
 			TriggerEvent('esx_teleport:hasEnteredExitMarker', currentZone)
 		end
 		
-		if not isInEntryMarker and not isInExitMarker and hasAlreadyEnteredMarker then
+		if not isInEntryMarker and not isInExitMarker and not isInWashMarker and hasAlreadyEnteredMarker then
 			hasAlreadyEnteredMarker = false
 			TriggerEvent('esx_teleport:masterExitMarker', LastZone)
 		end
@@ -146,7 +154,7 @@ Citizen.CreateThread(function()
 					end
 					RequestCollisionAtCoord(WhereTo.x, WhereTo.y, WhereTo.z)
 					NewLoadSceneStart(WhereTo.x, WhereTo.y, WhereTo.z, WhereTo.x, WhereTo.y, WhereTo.z, 100.0, 0);
-					StartPlayerTeleport(PlayerId(), WhereTo.x, WhereTo.y, WhereTo.z, Heading, false, true, false)
+					ESX.Game.Teleport(PlayerPedId(), WhereTo)
 					SetEntityHeading(PlayerPedId(), Heading)
 					SetGameplayCamRelativeHeading(0)
 					local tempTimer = GetGameTimer()
