@@ -38,25 +38,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
--- Enter / Exit Marker Events and money laundry event ( Promp Press E )
-AddEventHandler('esx_teleport:hasEnteredEntryMarker', function(zone)
-	CurrentAction     = 'waiting_entry'
-	CurrentActionMsg  = _U('prompt_Enter')
-	CurrentActionData = {zone = zone}
-end)
-
-AddEventHandler('esx_teleport:hasEnteredExitMarker', function(zone)
-	CurrentAction     = 'waiting_exit'
-	CurrentActionMsg  = _U('prompt_Exit')
-	CurrentActionData = {zone = zone}
-end)
-
-AddEventHandler('esx_teleport:masterExitMarker', function(zone)
-	CurrentAction = nil
-	CurrentActionData = nil	
-	CurrentActionData = {zone = zone}
-end)
-
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
@@ -90,31 +71,14 @@ Citizen.CreateThread(function()
 			TriggerEvent('esx_teleport:hasEnteredExitMarker', currentZone)
 		end
 		
-		if not isInEntryMarker and not isInExitMarker and hasAlreadyEnteredMarker then
+		if not isInEntryMarker and not isInExitMarker and not isInWashMarker and hasAlreadyEnteredMarker then
 			hasAlreadyEnteredMarker = false
 			TriggerEvent('esx_teleport:masterExitMarker', LastZone)
 		end
 		
-		Citizen.Wait(50)
+		Citizen.Wait(500)
 	end
 end)
-
--- Get authorized jobs
-function Authorized(zoneID)
-	if ESX.PlayerData.job == nil then
-		return false
-	end
-	
-	for _,job in pairs(zoneID.Jobs) do
-		
-		if job == 'any' or job == ESX.PlayerData.job.name then
-			return true
-		end
-	end
-	
-	return false
-	
-end
 
 -- Key Control
 Citizen.CreateThread(function()
@@ -169,4 +133,43 @@ Citizen.CreateThread(function()
 			Citizen.Wait(500)
 		end
 	end
+end)
+
+-- Get authorized jobs
+function Authorized(zoneID)
+	if ESX.PlayerData.job == nil then
+		return false
+	end
+	for _,job in pairs(zoneID.Jobs) do
+		
+		if job == 'any' or job == ESX.PlayerData.job.name then
+			return true
+		end
+	end
+	return false
+end
+
+-- Enter / Exit Marker Events and money laundry event ( Promp Press E )
+AddEventHandler('esx_teleport:hasEnteredEntryMarker', function(zone)
+	CurrentAction     = 'waiting_entry'
+	CurrentActionMsg  = _U('prompt_Enter')
+	CurrentActionData = {zone = zone}
+end)
+
+AddEventHandler('esx_teleport:hasEnteredExitMarker', function(zone)
+	CurrentAction     = 'waiting_exit'
+	CurrentActionMsg  = _U('prompt_Exit')
+	CurrentActionData = {zone = zone}
+end)
+
+AddEventHandler('esx_teleport:hasEnteredWashArea', function(zone)
+	CurrentAction     = 'wash_menu'
+	CurrentActionMsg  = _U('press_menu')
+	CurrentActionData = {zone = zone}
+end)
+
+AddEventHandler('esx_teleport:masterExitMarker', function(zone)
+	CurrentAction = nil
+	CurrentActionData = nil
+	CurrentActionData = {zone = zone}
 end)
