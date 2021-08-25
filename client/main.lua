@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
--- Enter / Exit Marker Events and money laundry event ( Promp Press E )
+-- Enter / Exit Marker Events
 AddEventHandler('esx_teleport:hasEnteredEntryMarker', function(zone)
 	CurrentAction     = 'waiting_entry'
 	CurrentActionMsg  = _U('prompt_Enter')
@@ -48,12 +48,6 @@ end)
 AddEventHandler('esx_teleport:hasEnteredExitMarker', function(zone)
 	CurrentAction     = 'waiting_exit'
 	CurrentActionMsg  = _U('prompt_Exit')
-	CurrentActionData = {zone = zone}
-end)
-
-AddEventHandler('esx_teleport:hasEnteredWashArea', function(zone)
-	CurrentAction     = 'wash_menu'
-	CurrentActionMsg  = _U('press_menu')
 	CurrentActionData = {zone = zone}
 end)
 
@@ -94,7 +88,7 @@ Citizen.CreateThread(function()
 			TriggerEvent('esx_teleport:hasEnteredExitMarker', currentZone)
 		end
 		
-		if not isInEntryMarker and not isInExitMarker and not isInWashMarker and hasAlreadyEnteredMarker then
+		if not isInEntryMarker and not isInExitMarker and hasAlreadyEnteredMarker then
 			hasAlreadyEnteredMarker = false
 			TriggerEvent('esx_teleport:masterExitMarker', LastZone)
 		end
