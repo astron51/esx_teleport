@@ -54,6 +54,7 @@ end)
 AddEventHandler('esx_teleport:masterExitMarker', function(zone)
 	CurrentAction = nil
 	CurrentActionData = nil	
+	CurrentActionData = {zone = zone}
 end)
 
 Citizen.CreateThread(function()
